@@ -50,6 +50,27 @@ class _LoginScreenState extends State<LoginScreen> {
                   icon: Image.network(
                     'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png',
                     height: 22,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(
+                        Icons.g_mobiledata,
+                        color: Colors.grey[600],
+                        size: 22,
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return SizedBox(
+                        height: 22,
+                        width: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
                   ),
                   label: const Text(
                     'Google',
