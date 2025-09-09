@@ -134,14 +134,28 @@ class ToursController extends GetxController {
       'id': tour['id']?.toString() ?? '',
       'image': imageUrl,
       'title': tour['title']?.toString() ?? '',
+      'description': tour['description']?.toString() ?? '',
+      'information': tour['information']?.toString() ?? '',
       'price': double.tryParse(tour['price']?.toString() ?? '0') ?? 0.0,
       'startDate': tour['startDate']?.toString() ?? '',
       'endDate': tour['endDate']?.toString() ?? '',
+      'upcoming': tour['upcoming'] ?? false,
       'isEveryday': tour['isEveryday']?.toString() == 'true',
+      'createdBy': tour['createdBy']?.toString() ?? '',
+      'gallery': tour['gallery']?.toString() ?? '',
+      'createdAt': tour['createdAt']?.toString() ?? '',
+      'updatedAt': tour['updatedAt']?.toString() ?? '',
+      'message': tour['message']?.toString() ?? '',
+      'status': tour['status']?.toString() ?? '',
+      'discount': double.tryParse(tour['discount']?.toString() ?? '0') ?? 0.0,
+      'rule_images': tour['rule_images']?.toString() ?? '',
+      'experiences': tour['experiences'] ?? [],
       'category': tour['category']?['title']?.toString() ?? 'all',
+      'categoryId': tour['category']?['id']?.toString() ?? '',
       'destination': tour['destination']?['title']?.toString() ?? '',
-      'rating': 4.9, // You can add this to your API
-      'reviews': 56, // You can add this to your API
+      'destinationId': tour['destination']?['id']?.toString() ?? '',
+      'rating': 4.9, // Dummy rating
+      'reviews': 56, // Dummy reviews
     };
   }
 

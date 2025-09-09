@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:sololandscapes_moblie/components/custom_app_bar.dart';
 import 'package:sololandscapes_moblie/unit/colors.dart';
 import 'package:sololandscapes_moblie/unit/font.dart';
+import 'package:sololandscapes_moblie/utils/description_parser.dart';
 
 class TourDetailsScreen extends StatelessWidget {
   const TourDetailsScreen({super.key});
@@ -153,19 +154,16 @@ class TourDetailsScreen extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  // Description placeholder
+                  // Description section
                   Text(
                     'About this tour',
                     style: KantumruyFont.bold(fontSize: 18, color: primary600),
                   ),
                   const SizedBox(height: 12),
-                  Text(
-                    'Experience the best of ${tour['title']} with our expertly guided tour. This adventure offers breathtaking views, cultural insights, and unforgettable memories.',
-                    style: KantumruyFont.regular(
-                      fontSize: 16,
-                      color: Colors.grey[700],
-                      height: 1.5,
-                    ),
+
+                  // Parse and display the description from API
+                  ...DescriptionParser.parseEditorJsToWidgets(
+                    tour['description'],
                   ),
                 ],
               ),
