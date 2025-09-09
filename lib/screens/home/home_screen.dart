@@ -29,17 +29,17 @@ class _HomeScreenState extends State<HomeScreen> {
       // Use a light grey background color for the entire screen
       backgroundColor: getColorFromHex("F1F1F1"),
       appBar: const CustomAppBar(
-        onNotificationPressed: null, // Will use default behavior
+        onNotificationPressed: null,
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(16.0),
               child: _buildFindTourSection(),
             ),
-            const SizedBox(height: 16),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: _buildSectionHeader(title: 'Upcoming Tour'),

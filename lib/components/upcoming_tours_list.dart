@@ -8,16 +8,28 @@ class UpcomingToursList extends StatelessWidget {
   String formatDateRange(String startDate, String endDate) {
     try {
       if (startDate.isEmpty || endDate.isEmpty) return '';
-      
+
       final start = DateTime.parse(startDate);
       final end = DateTime.parse(endDate);
-      
-      final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      
+
+      final months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
+
       final startMonth = months[start.month - 1];
       final endMonth = months[end.month - 1];
-      
+
       if (start.year == end.year) {
         if (start.month == end.month) {
           // Same month and year: "Sep 12 – 14, 2025"
@@ -132,9 +144,9 @@ class UpcomingToursList extends StatelessWidget {
                     ),
                     const Spacer(),
                     Text(
-                      tour['isEveryday'] == 'true' 
-                        ? 'Everyday • \$${tour['price']} per person'
-                        : '${formatDateRange(tour['startDate'] ?? '', tour['endDate'] ?? '')} • \$${tour['price']} per person',
+                      tour['isEveryday'] == 'true'
+                          ? 'Everyday • \$${tour['price']} per person'
+                          : '${formatDateRange(tour['startDate'] ?? '', tour['endDate'] ?? '')} • \$${tour['price']} per person',
                       style: TextStyle(color: Colors.grey[600], fontSize: 12),
                     ),
                     const SizedBox(height: 4),
