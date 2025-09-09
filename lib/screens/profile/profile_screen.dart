@@ -8,7 +8,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: getColorFromHex("EBEBEB"),
+      backgroundColor: ColorsHex("EBEBEB"),
       appBar: CustomAppBar(
         showBackButton: true, // Show back button for non-home screens
         onNotificationPressed: () {

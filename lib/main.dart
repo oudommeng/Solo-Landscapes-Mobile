@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:get/get.dart';
 import 'package:sololandscapes_moblie/screens/home/home_screen.dart';
 import 'package:sololandscapes_moblie/services/api_config.dart';
+import 'package:sololandscapes_moblie/routes/app_routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,12 +28,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GraphQLProvider(
       client: ValueNotifier(client),
-      child: MaterialApp(
+      child: GetMaterialApp(
         title: 'Solo Landscapes Mobile',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         ),
         home: const HomeScreen(),
+        getPages: AppRoutes.routes,
       ),
     );
   }

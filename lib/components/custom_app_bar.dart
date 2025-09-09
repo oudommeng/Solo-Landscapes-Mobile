@@ -97,7 +97,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: getColorFromHex("EBEBEB"),
+                  color: ColorsHex("EBEBEB"),
                   spreadRadius: 1,
                   blurRadius: 5,
                   offset: const Offset(0, 2),

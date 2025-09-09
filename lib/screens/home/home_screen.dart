@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:get/get.dart';
 import 'package:sololandscapes_moblie/unit/colors.dart';
+import 'package:sololandscapes_moblie/unit/font.dart';
 import 'package:sololandscapes_moblie/components/custom_app_bar.dart';
-import 'package:sololandscapes_moblie/components/upcoming_tours_list.dart';
+import 'package:sololandscapes_moblie/components/upcoming_tours_card.dart';
 import 'package:sololandscapes_moblie/services/api_config.dart';
 
 // Main widget for the home screen
@@ -27,10 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       // Use a light grey background color for the entire screen
-      backgroundColor: getColorFromHex("F1F1F1"),
-      appBar: const CustomAppBar(
-        onNotificationPressed: null,
-      ),
+      backgroundColor: ColorsHex("F1F1F1"),
+      appBar: const CustomAppBar(onNotificationPressed: null),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: _buildSectionHeader(title: 'Upcoming Tour'),
             ),
             const SizedBox(height: 8),
+            // Ftach Data only for page 1
             Query(
               options: QueryOptions(
                 document: gql(ApiConfig.getComingToursQuery),
@@ -61,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 final toursData =
                     result.data?['upcoming_tours'] as List<dynamic>? ?? [];
-                final tours = toursData.map((tour) {
+                final tours = toursData.take(10).map((tour) {
                   // Handle gallery - could be array, JSON string, or single string
                   String imageUrl = '';
                   if (tour['gallery'] != null) {
@@ -129,6 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   print('====================================');
 
                   return {
+                    'id': tour['id']?.toString() ?? '',
                     'image': imageUrl,
                     'title': tour['title']?.toString() ?? '',
                     'price': tour['price']?.toString() ?? '0',
@@ -137,6 +139,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     'isEveryday': tour['isEveryday']?.toString() ?? 'false',
                     'rating': '4.9', // Dummy rating
                     'reviews': '56 Reviews', // Dummy reviews
+                    'destination':
+                        tour['destination']?['title']?.toString() ?? '',
                   };
                 }).toList();
 
@@ -162,12 +166,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Find Your Tour',
-          style: TextStyle(
+          style: KantumruyFont.bold(
             fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF4A7C59), // Muted green color
+            color: const Color(0xFF4A7C59),
           ),
         ),
         const SizedBox(height: 20),
@@ -181,10 +184,10 @@ class _HomeScreenState extends State<HomeScreen> {
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
-            icon: const Icon(Icons.search, color: Colors.white),
-            label: const Text(
+            icon: const Icon(Icons.search_outlined, color: Colors.white),
+            label: Text(
               'Search Your Tour',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: KantumruyFont.bold(fontSize: 16),
             ),
             onPressed: () {},
             style: ElevatedButton.styleFrom(
@@ -206,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return TextField(
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(color: Colors.grey[500]),
+        hintStyle: KantumruyFont.regular(color: Colors.grey[500]),
         prefixIcon: Icon(icon, color: Colors.grey[500]),
         filled: true,
         fillColor: Colors.white,
@@ -231,19 +234,18 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF4A7C59),
-          ),
-        ),
+        Text(title, style: KantumruyFont.bold(fontSize: 22, color: primary600)),
         TextButton(
-          onPressed: () {},
-          child: const Text(
+          onPressed: () {
+            // Navigate to All Tours screen using GetX named routes
+            Get.toNamed(
+              '/all-tours',
+              arguments: {'client': GraphQLProvider.of(context).value},
+            );
+          },
+          child: Text(
             'See all',
-            style: TextStyle(color: Colors.grey, fontSize: 14),
+            style: KantumruyFont.bold(color: primary600, fontSize: 16),
           ),
         ),
       ],
@@ -284,13 +286,13 @@ class _HomeScreenState extends State<HomeScreen> {
           );
           return Card(
             elevation: 2,
-            shadowColor: Colors.grey.withOpacity(0.2),
+            shadowColor: Colors.grey.withValues(alpha: 0.2),
             clipBehavior:
                 Clip.antiAlias, // Ensures the image respects the border radius
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
-            margin: const EdgeInsets.only(right: 16),
+            margin: const EdgeInsets.only(right: 8),
             child: SizedBox(
               width: 130,
               child: Stack(
@@ -339,7 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       gradient: LinearGradient(
                         colors: [
                           Colors.transparent,
-                          Colors.black.withOpacity(0.7),
+                          Colors.black.withValues(alpha: 0.7),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -351,9 +353,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     left: 16,
                     child: Text(
                       style['label']!,
-                      style: const TextStyle(
+                      style: KantumruyFont.bold(
                         color: Colors.white,
-                        fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
                     ),
@@ -374,7 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(alpha: 0.2),
             spreadRadius: 1,
             blurRadius: 10,
           ),
@@ -408,7 +409,7 @@ class _HomeScreenState extends State<HomeScreen> {
               label: 'Challenges',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.more_horiz),
+              icon: Icon(Icons.more_horiz_outlined),
               label: 'More',
             ),
           ],
