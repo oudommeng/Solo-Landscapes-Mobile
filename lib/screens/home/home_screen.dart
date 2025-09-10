@@ -5,7 +5,7 @@ import 'package:sololandscapes_moblie/unit/colors.dart';
 import 'package:sololandscapes_moblie/unit/font.dart';
 import 'package:sololandscapes_moblie/components/custom_app_bar.dart';
 import 'package:sololandscapes_moblie/components/upcoming_tours_card.dart';
-import 'package:sololandscapes_moblie/services/api_config.dart';
+import 'package:sololandscapes_moblie/controllers/tours_controller.dart';
 
 // Main widget for the home screen
 class HomeScreen extends StatefulWidget {
@@ -18,6 +18,27 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   // State to keep track of the selected tab in the bottom navigation bar
   int _selectedIndex = 0;
+  late ToursController _toursController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Try to find existing controller or create one
+    try {
+      _toursController = Get.find<ToursController>();
+    } catch (e) {
+      _toursController = Get.put(ToursController());
+    }
+
+    // Initialize controller with GraphQL client after widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final GraphQLClient? client = GraphQLProvider.of(context).value;
+      if (client != null) {
+        _toursController.setGraphQLClient(client);
+        _toursController.loadTours();
+      }
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -45,108 +66,27 @@ class _HomeScreenState extends State<HomeScreen> {
               child: _buildSectionHeader(title: 'Upcoming Tour'),
             ),
             const SizedBox(height: 8),
-            // Ftach Data only for page 1
-            Query(
-              options: QueryOptions(
-                document: gql(ApiConfig.getComingToursQuery),
-                variables: {'page': 1},
-              ),
-              builder: (QueryResult result, {VoidCallback? refetch, FetchMore? fetchMore}) {
-                if (result.hasException) {
-                  return Text('Error: ${result.exception.toString()}');
-                }
+            // Use ToursController for upcoming tours
+            Obx(() {
+              if (_toursController.isLoading.value &&
+                  _toursController.filteredTours.isEmpty) {
+                return const SizedBox(
+                  height: 340,
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
 
-                if (result.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+              if (_toursController.filteredTours.isEmpty) {
+                return const SizedBox(
+                  height: 340,
+                  child: Center(child: Text('No upcoming tours available')),
+                );
+              }
 
-                final toursData =
-                    result.data?['upcoming_tours'] as List<dynamic>? ?? [];
-                final tours = toursData.take(10).map((tour) {
-                  // Handle gallery - could be array, JSON string, or single string
-                  String imageUrl = '';
-                  if (tour['gallery'] != null) {
-                    try {
-                      if (tour['gallery'] is List &&
-                          (tour['gallery'] as List).isNotEmpty) {
-                        // Handle as actual List
-                        final firstImage = (tour['gallery'] as List).first;
-                        if (firstImage != null &&
-                            firstImage.toString().isNotEmpty) {
-                          imageUrl = firstImage.toString();
-                        }
-                      } else if (tour['gallery'] is String) {
-                        final galleryString = tour['gallery'] as String;
-                        if (galleryString.isNotEmpty) {
-                          // Try to parse as JSON array
-                          if (galleryString.startsWith('[') &&
-                              galleryString.endsWith(']')) {
-                            // Parse JSON string array
-                            final cleanedString = galleryString.substring(
-                              1,
-                              galleryString.length - 1,
-                            );
-                            final urls = cleanedString
-                                .split('","')
-                                .map((url) => url.replaceAll('"', '').trim())
-                                .where((url) => url.isNotEmpty)
-                                .toList();
-
-                            if (urls.isNotEmpty) {
-                              imageUrl = urls.first;
-                            }
-                          } else {
-                            // Handle as single URL string
-                            imageUrl = galleryString;
-                          }
-                        }
-                      }
-                    } catch (e) {
-                      print(
-                        'Error processing gallery for ${tour['title']}: $e',
-                      );
-                    }
-                  }
-
-                  // Debug logging
-                  print('=== Processing tour: ${tour['title']} ===');
-                  print('Raw gallery data: ${tour['gallery']}');
-                  print('Gallery type: ${tour['gallery']?.runtimeType}');
-                  if (tour['gallery'] is List) {
-                    print(
-                      'Gallery length: ${(tour['gallery'] as List).length}',
-                    );
-                    if ((tour['gallery'] as List).isNotEmpty) {
-                      print(
-                        'First gallery item: ${(tour['gallery'] as List).first}',
-                      );
-                      print(
-                        'First gallery item type: ${(tour['gallery'] as List).first?.runtimeType}',
-                      );
-                    }
-                  }
-                  print('Final imageUrl: "$imageUrl"');
-                  print('ImageUrl length: ${imageUrl.length}');
-                  print('====================================');
-
-                  return {
-                    'id': tour['id']?.toString() ?? '',
-                    'image': imageUrl,
-                    'title': tour['title']?.toString() ?? '',
-                    'price': tour['price']?.toString() ?? '0',
-                    'startDate': tour['startDate']?.toString() ?? '',
-                    'endDate': tour['endDate']?.toString() ?? '',
-                    'isEveryday': tour['isEveryday']?.toString() ?? 'false',
-                    'rating': '4.9', // Dummy rating
-                    'reviews': '56 Reviews', // Dummy reviews
-                    'destination':
-                        tour['destination']?['title']?.toString() ?? '',
-                  };
-                }).toList();
-
-                return UpcomingToursList(tours: tours);
-              },
-            ),
+              // Take only first 10 tours for home screen
+              final tours = _toursController.filteredTours.take(10).toList();
+              return UpcomingToursList(tours: tours);
+            }),
             const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),

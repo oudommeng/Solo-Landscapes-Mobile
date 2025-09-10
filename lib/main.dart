@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:get/get.dart';
-import 'package:sololandscapes_moblie/screens/home/home_screen.dart';
 import 'package:sololandscapes_moblie/services/api_config.dart';
 import 'package:sololandscapes_moblie/routes/app_routes.dart';
 
@@ -33,7 +32,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         ),
-        home: const HomeScreen(),
+        initialRoute: AppRoutes.home,
         getPages: AppRoutes.routes,
       ),
     );

@@ -12,7 +12,11 @@ class AppRoutes {
   static const String login = '/login';
 
   static List<GetPage> routes = [
-    GetPage(name: home, page: () => const HomeScreen()),
+    GetPage(
+      name: home,
+      page: () => const HomeScreen(),
+      binding: ToursBinding(),
+    ),
     GetPage(
       name: allTours,
       page: () => const AllToursScreen(),

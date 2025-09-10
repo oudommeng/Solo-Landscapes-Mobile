@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sololandscapes_moblie/services/api_config.dart';
 
-enum SortBy { price, date, rating, name }
+enum SortBy { price, date, /* rating, */ name }
 
 enum FilterBy { all, solo, family, group }
 
@@ -154,8 +154,8 @@ class ToursController extends GetxController {
       'categoryId': tour['category']?['id']?.toString() ?? '',
       'destination': tour['destination']?['title']?.toString() ?? '',
       'destinationId': tour['destination']?['id']?.toString() ?? '',
-      'rating': 4.9, // Dummy rating
-      'reviews': 56, // Dummy reviews
+      'rating': 4.9, // Dummy rating - commented out
+      'reviews': 56, // Dummy reviews - commented out
     };
   }
 
@@ -207,11 +207,11 @@ class ToursController extends GetxController {
           return dateA.compareTo(dateB);
         });
         break;
-      case SortBy.rating:
-        filtered.sort(
-          (a, b) => (b['rating'] as double).compareTo(a['rating'] as double),
-        );
-        break;
+      // case SortBy.rating:
+      //   filtered.sort(
+      //     (a, b) => (b['rating'] as double).compareTo(a['rating'] as double),
+      //   );
+      //   break;
       case SortBy.name:
         filtered.sort(
           (a, b) => a['title'].toString().compareTo(b['title'].toString()),

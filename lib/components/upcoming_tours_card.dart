@@ -4,7 +4,7 @@ import 'package:sololandscapes_moblie/unit/colors.dart';
 import 'package:sololandscapes_moblie/unit/font.dart';
 
 class UpcomingToursList extends StatelessWidget {
-  final List<Map<String, String>> tours;
+  final List<Map<String, dynamic>> tours; // Changed to Map<String, dynamic>
 
   const UpcomingToursList({super.key, required this.tours});
 
@@ -35,14 +35,11 @@ class UpcomingToursList extends StatelessWidget {
 
       if (start.year == end.year) {
         if (start.month == end.month) {
-          // Same month and year: "Sep 12 – 14, 2025"
           return '$startMonth ${start.day} – ${end.day}, ${start.year}';
         } else {
-          // Different month, same year: "Sep 12 – Oct 14, 2025"
           return '$startMonth ${start.day} – $endMonth ${end.day}, ${start.year}';
         }
       } else {
-        // Different years: "Dec 12, 2024 – Jan 14, 2025"
         return '$startMonth ${start.day}, ${start.year} – $endMonth ${end.day}, ${end.year}';
       }
     } catch (e) {
@@ -61,7 +58,7 @@ class UpcomingToursList extends StatelessWidget {
         itemBuilder: (context, index) {
           final tour = tours[index];
           print(
-            'Loading image for tour ${tour['title']}: ${tour['image']} (type: ${tour['image'].runtimeType})',
+            'Loading image for tour ${tour['title']}: ${tour['image']} (type: ${tour['image']?.runtimeType})',
           );
           return Container(
             width: 320,
@@ -75,26 +72,8 @@ class UpcomingToursList extends StatelessWidget {
               color: Colors.white,
               child: InkWell(
                 onTap: () {
-                  // Convert string values to appropriate types for tour details
-                  final tourData = {
-                    'id': tour['id'] ?? '',
-                    'image': tour['image'] ?? '',
-                    'title': tour['title'] ?? '',
-                    'price': double.tryParse(tour['price'] ?? '0') ?? 0.0,
-                    'startDate': tour['startDate'] ?? '',
-                    'endDate': tour['endDate'] ?? '',
-                    'isEveryday': tour['isEveryday'] == 'true',
-                    'rating': double.tryParse(tour['rating'] ?? '4.9') ?? 4.9,
-                    'reviews':
-                        int.tryParse(
-                          tour['reviews']?.replaceAll(' Reviews', '') ?? '56',
-                        ) ??
-                        56,
-                        
-                  };
-
-                  // Navigate to tour details using GetX
-                  Get.toNamed('/tour-details', arguments: tourData);
+                  // Navigate to tour details using GetX, passing the full tour map
+                  Get.toNamed('/tour-details', arguments: tour);
                 },
                 borderRadius: BorderRadius.circular(16),
                 child: Padding(
@@ -104,9 +83,9 @@ class UpcomingToursList extends StatelessWidget {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: tour['image']!.isNotEmpty
+                        child: tour['image']?.toString().isNotEmpty ?? false
                             ? Image.network(
-                                tour['image']!,
+                                tour['image'].toString(),
                                 height: 150,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
@@ -162,7 +141,7 @@ class UpcomingToursList extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        tour['title']!,
+                        tour['title']?.toString() ?? 'No Title',
                         style: KantumruyFont.bold(
                           fontSize: 18,
                           color: primary600,
@@ -181,11 +160,12 @@ class UpcomingToursList extends StatelessWidget {
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              tour['isEveryday'] == 'true'
+                              tour['isEveryday'] == true ||
+                                      tour['isEveryday'] == 'true'
                                   ? 'Everyday'
                                   : formatDateRange(
-                                      tour['startDate'] ?? '',
-                                      tour['endDate'] ?? '',
+                                      tour['startDate']?.toString() ?? '',
+                                      tour['endDate']?.toString() ?? '',
                                     ),
                               style: KantumruyFont.regular(
                                 color: Colors.grey[600],
@@ -208,7 +188,8 @@ class UpcomingToursList extends StatelessWidget {
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              tour['destination'] ?? 'Unknown Location',
+                              tour['destination']?.toString() ??
+                                  'Unknown Location',
                               style: KantumruyFont.regular(
                                 color: Colors.grey[600],
                                 fontSize: 17,
@@ -225,27 +206,8 @@ class UpcomingToursList extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              // Icon(
-                              //   Icons.star_outlined,
-                              //   color: Colors.amber[600],
-                              //   size: 16,
-                              // ),
-                              // const SizedBox(width: 4),
-                              // Text(
-                              //   '${tour['rating']}  ',
-                              //   style: KantumruyFont.bold(),
-                              // ),
-                              // Text(
-                              //   tour['reviews']!,
-                              //   style: KantumruyFont.regular(
-                              //     color: Colors.grey[600],
-                              //     fontSize: 12,
-                              //   ),
-                              //   maxLines: 1,
-                              //   overflow: TextOverflow.ellipsis,
-                              // ),
                               Text(
-                                '\$${tour['price']} per person',
+                                '\$${(tour['price'] is double ? tour['price'] : double.tryParse(tour['price']?.toString() ?? '0') ?? 0.0).toStringAsFixed(0)} per person',
                                 style: KantumruyFont.regular(
                                   color: Colors.grey[600],
                                   fontSize: 18,
@@ -271,10 +233,10 @@ class UpcomingToursList extends StatelessWidget {
                       ),
                     ],
                   ),
-                ), // This closes the Padding widget
-              ), // This closes the InkWell widget
-            ), // This closes the Card widget
-          ); // This closes the Container widget
+                ),
+              ),
+            ),
+          );
         },
       ),
     );

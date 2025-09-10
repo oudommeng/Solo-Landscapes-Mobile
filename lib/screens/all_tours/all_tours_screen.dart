@@ -180,8 +180,8 @@ class _AllToursScreenState extends State<AllToursScreen> {
         return 'Price';
       case SortBy.date:
         return 'Date';
-      case SortBy.rating:
-        return 'Rating';
+      // case SortBy.rating:
+      //   return 'Rating';
       case SortBy.name:
         return 'Name';
     }

@@ -65,11 +65,22 @@ class TourDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Icon(Icons.star, color: Colors.amber[600], size: 20),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${tour['rating']} (${tour['reviews']} reviews)',
-                        style: KantumruyFont.medium(fontSize: 16),
+                      Icon(
+                        Icons.location_on_outlined,
+                        color: Colors.grey[700],
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          tour['destination'] ?? 'Unknown Location',
+                          style: KantumruyFont.medium(
+                            fontSize: 16,
+                            color: Colors.grey[700],
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
@@ -78,15 +89,16 @@ class TourDetailsScreen extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.calendar_today_outlined,
-                        color: Colors.grey[600],
+                        color: Colors.grey[700],
                         size: 20,
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        tour['isEveryday'] == true
+                        tour['isEveryday'] == true ||
+                                tour['isEveryday'] == 'true'
                             ? 'Available Everyday'
                             : '${tour['startDate']} - ${tour['endDate']}',
-                        style: KantumruyFont.regular(
+                        style: KantumruyFont.medium(
                           fontSize: 16,
                           color: Colors.grey[700],
                         ),
@@ -116,7 +128,7 @@ class TourDetailsScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '\$${tour['price']?.toStringAsFixed(0) ?? '0'}',
+                              '\$${(tour['price'] is double ? tour['price'] : double.tryParse(tour['price']?.toString() ?? '0') ?? 0.0).toStringAsFixed(0)}',
                               style: KantumruyFont.bold(
                                 fontSize: 28,
                                 color: const Color(0xFF6B8E23),
