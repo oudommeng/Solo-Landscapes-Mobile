@@ -16,8 +16,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // State to keep track of the selected tab in the bottom navigation bar
-  int _selectedIndex = 0;
   late ToursController _toursController;
 
   @override
@@ -37,12 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
         _toursController.setGraphQLClient(client);
         _toursController.loadTours();
       }
-    });
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
     });
   }
 
@@ -97,7 +89,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -304,64 +295,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  /// Builds the bottom navigation bar
-  Widget _buildBottomNavigationBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.2),
-            spreadRadius: 1,
-            blurRadius: 10,
-          ),
-        ],
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
-        ),
-      ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
-        ),
-        child: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.explore_outlined),
-              label: 'Experiences',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.style_outlined),
-              label: 'Travel Styles',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.emoji_events_outlined),
-              label: 'Challenges',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.more_horiz_outlined),
-              label: 'More',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: const Color(0xFF4A7C59),
-          unselectedItemColor: Colors.grey[400],
-          onTap: _onItemTapped,
-          backgroundColor: Colors.white,
-          type: BottomNavigationBarType.fixed, // Ensures all labels are visible
-          showUnselectedLabels: true,
-          elevation: 0,
-        ),
       ),
     );
   }
